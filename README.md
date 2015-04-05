@@ -8,7 +8,7 @@ in case of deployment of a website.
 The test is composed in two parts.
 The first part is `switch-symlink.py` script,
 which will constantly change symlink of `current` folder with even `a` or `b` folder
-by using a forced or an atomic symlink strategy.
+by using a forced (`ln -sfn`) or an atomic (`ln` a temporary link then a `mv`) symlink strategy.
 
 Example :
 
@@ -71,9 +71,9 @@ Status code distribution:
 
 ## Conclusion
 
-Both 404 and 500 reponses are problematic in case of forced symlink deployment,
+Both 404 and 500 reponses are problematic in case of forced symlink deployment (`ln -sfn`),
 it makes the website unvailable for a short period of time where no symlink is present.
 The 500 is even more problematic, it can be the suppression of the symlink (before the replacment by the new)
 during a current request, which can leave your application in a very unstable state, e.g an `include()` or an `fopen()` operation.
 
-Solution : Use linux rename operation : `mv` (`os.rename()` in Python), which is an atomic operation.
+Solution : Use linux rename operation : `mv` (`os.rename()` in Python), which is an atomic operation, you won't loose your requests using this strategy.
